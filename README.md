@@ -59,6 +59,10 @@
 
 ## 5. Open EC2 and Install docker in EC2 Machine:
 
+     #optional
+
+     sudo apt-get update -y
+
      sudo apt-get upgrade
 
      #required
@@ -82,4 +86,8 @@
     - LANGSMITH_ENDPOINT
     - LANGSMITH_API_KEY
     - LANGSMITH_PROJECT
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_DEFAULT_REGION
+    - ECR_REPO
 
