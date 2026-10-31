@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101322" />
+    <title>ApekshaGPT — Agentic AI Chatbot</title>
+
+    <style>
+      :root {
+        --bg: #0d1020;
+        --panel: #15192b;
+        --line: #2b314b;
+        --text: #f2f4ff;
+        --muted: #9ba4c2;
+        --accent: #9b8cff;
+        --accent-2: #6edcc4;
+        --danger: #ff8d9b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(900px 500px at 75% -10%, #29214f 0%, transparent 60%),
+          radial-gradient(
+            700px 500px at -10% 100%,
+            #123d45 0%,
+            transparent 55%
+          ),
+          var(--bg);
+        color: var(--text);
+        font:
+          15px/1.5 Inter,
+          system-ui,
+          sans-serif;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding: 22px 16px;
+        border-right: 1px solid var(--line);
+        background: rgba(13, 16, 32, 0.72);
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .logo {
+        width: 39px;
+        height: 39px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        color: #121426;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      }
+      .brand-name {
+        font-weight: 750;
+      }
+      .brand-sub {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .new-chat {
+        border: 1px solid #4b4674;
+        background: #24213d;
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .side-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7781a3;
+      }
+      .side-note {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status {
+        margin-top: auto;
+        border: 1px solid var(--line);
+        background: #13182a;
+        border-radius: 14px;
+        padding: 13px;
+      }
+      .status strong {
+        display: block;
+        font-size: 13px;
+      }
+      .status span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        min-height: 76px;
+        padding: 0 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .top-title {
+        font-weight: 700;
+      }
+      .model-chip {
+        padding: 7px 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: #c7c9e2;
+        font-size: 12px;
+        background: var(--panel);
+      }
+
+      .conversation {
+        flex: 1;
+        width: min(880px, 100%);
+        margin: 0 auto;
+        padding: 38px 26px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .welcome {
+        text-align: center;
+        padding: 7vh 10px 20px;
+      }
+      .welcome-icon {
+        margin: 0 auto 20px;
+        width: 64px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background: #24213d;
+        border: 1px solid #625a9b;
+        font-size: 29px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: -1.5px;
+        line-height: 1.12;
+      }
+      .gradient {
+        background: linear-gradient(90deg, #b7aaff, #79e4cf);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .welcome p {
+        margin: 0 auto;
+        max-width: 520px;
+        color: var(--muted);
+      }
+
+      .suggestions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+        max-width: 650px;
+        margin: 28px auto 0;
+      }
+      .suggestion {
+        padding: 14px;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        color: #dce0fa;
+        background: #171b2d;
+      }
+      .suggestion small {
+        display: block;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .message {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .avatar {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .avatar.ai {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #121426;
+      }
+      .avatar.user {
+        background: #2a314a;
+        color: #d9def7;
+      }
+      .bubble {
+        padding: 10px 14px;
+        max-width: calc(100% - 44px);
+        color: #e6e9fb;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .message.user .bubble {
+        background: #242943;
+        border: 1px solid #343b5c;
+        border-radius: 15px 4px 15px 15px;
+      }
+      .message.ai .bubble {
+        padding-left: 0;
+      }
+
+      .composer-wrap {
+        position: sticky;
+        bottom: 0;
+        padding: 15px 24px 20px;
+        background: linear-gradient(transparent, var(--bg) 25%);
+      }
+      .composer {
+        width: min(830px, 100%);
+        margin: 0 auto;
+        padding: 11px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+        border: 1px solid #454967;
+        background: #171b2d;
+        border-radius: 19px;
+      }
+      textarea {
+        width: 100%;
+        resize: none;
+        min-height: 27px;
+        max-height: 160px;
+        color: white;
+        background: transparent;
+        border: 0;
+        outline: 0;
+        padding: 6px 7px;
+      }
+      textarea::placeholder {
+        color: #7f89a9;
+      }
+      .send {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        border: 0;
+        border-radius: 13px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #101322;
+        font-size: 19px;
+        font-weight: 800;
+      }
+      .send:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .composer-hint {
+        width: min(830px, 100%);
+        margin: 9px auto 0;
+        text-align: center;
+        color: #737d9d;
+        font-size: 11px;
+      }
+      .error {
+        color: var(--danger);
+        font-size: 13px;
+        max-width: 830px;
+        margin: 8px auto;
+      }
+
+      .thread-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 45vh;
+        overflow-y: auto;
+      }
+      .thread-item {
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+        color: #dce0fa;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .thread-item:hover {
+        background: #24213d;
+        border-color: #454967;
+      }
+      .thread-empty {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 8px;
+      }
+
+      @media (max-width: 760px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          display: none;
+        }
+        .topbar {
+          min-height: 64px;
+          padding: 0 17px;
+        }
+        .conversation {
+          padding: 22px 16px;
+        }
+        .suggestions {
+          grid-template-columns: 1fr;
+        }
+        .composer-wrap {
+          padding: 10px 12px 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">A</div>
+          <div>
+            <div class="brand-name">ApekshaGPT</div>
+            <div class="brand-sub">Agentic AI workspace</div>
+          </div>
+        </div>
+
+        <button class="new-chat" id="newChat" type="button">
+          ＋ &nbsp; New conversation
+        </button>
+
+        <div class="side-label">Workspace</div>
+        <div class="side-note">
+          Ask questions, explore your documents, or test your AI agent.
+        </div>
+
+        <div class="side-label">Recent conversations</div>
+        <div id="threadList" class="thread-list">
+          <div class="side-note">Loading conversations...</div>
+        </div>
+
+        <div class="status">
+          <strong>Chat interface</strong>
+          <span id="connectionText">Waiting for your first message</span>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div class="top-title">AI Assistant</div>
+          <div class="model-chip">Agentic AI · LangGraph</div>
+        </header>
+
+        <section class="conversation" id="conversation" aria-live="polite">
+          <div class="welcome" id="welcome">
+            <div class="welcome-icon">✦</div>
+            <h1>
+              Your ideas, meet<br /><span class="gradient"
+                >intelligent action.</span
+              >
+            </h1>
+            <p>
+              Ask a question, explore a concept, or use your agent to reason
+              through a task step by step.
+            </p>
+
+            <div class="suggestions">
+              <button
+                type="button"
+                class="suggestion"
+                data-prompt="Explain how LangGraph works in simple terms."
+              >
+                ◈ &nbsp; Learn something
+                <small>Explain LangGraph simply</small>
+              </button>
+              <button
+                type="button"
+                class="suggestion"
+                data-prompt="Help me debug a Python error step by step."
+              >
+                ⌘ &nbsp; Debug code
+                <small>Understand a Python error</small>
+              </button>
+              <button
+                type="button"
+                class="suggestion"
+                data-prompt="What is long-term memory in an AI chatbot?"
+              >
+                ◎ &nbsp; Explore memory
+                <small>How chatbot memory works</small>
+              </button>
+              <button
+                type="button"
+                class="suggestion"
+                data-prompt="Give me a small AI project task to practice today."
+              >
+                ↗ &nbsp; Build a project
+                <small>Practice with a small task</small>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div class="composer-wrap">
+          <form class="composer" id="chatForm">
+            <textarea
+              id="userInput"
+              rows="1"
+              placeholder="Message ApekshaGPT..."
+              aria-label="Message"
+              required
+            ></textarea>
+
+           <!-- Microphone button -->
+<button
+  type="button"
+  id="voiceButton"
+  class="send"
+  aria-label="Start voice recording"
+  title="Record voice"
+>
+  🎙️
+</button>
+
+<!-- Send button -->
+<button
+  class="send"
+  id="sendButton"
+  type="submit"
+  aria-label="Send message"
+>
+  ↑
+</button>
+              ↑
+            </button>
+          </form>
+          <div class="composer-hint">
+            Enter to send · Shift + Enter for a new line
+          </div>
+          <p class="error" id="errorMessage" hidden></p>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const API_URL = "/chat";
+
+      const conversation = document.getElementById("conversation");
+      const form = document.getElementById("chatForm");
+      const input = document.getElementById("userInput");
+      const sendButton = document.getElementById("sendButton");
+
+      const voiceButton = document.getElementById("voiceButton");
+
+      let mediaRecorder;
+      let audioChunks = [];
+      let isRecording = false;
+
+      voiceButton.addEventListener("click", async () => {
+        try {
+          // Start recording
+          if (!isRecording) {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+            });
+
+            audioChunks = [];
+
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (event) => {
+              if (event.data.size > 0) {
+                audioChunks.push(event.data);
+              }
+            };
+
+            mediaRecorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, {
+                type: mediaRecorder.mimeType,
+              });
+
+              stream.getTracks().forEach((track) => track.stop());
+
+              const formData = new FormData();
+              formData.append("file", audioBlob, "recording.webm");
+
+              voiceButton.textContent = "⏳";
+
+              try {
+                const response = await fetch("/transcribe", {
+                  method: "POST",
+                  body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Transcription failed");
+                }
+
+                input.value = data.text;
+                resizeInput();
+                input.focus();
+
+                // Send transcribed text to ApekshaGPT
+                if (data.text.trim()) {
+                  sendMessage(data.text);
+                }
+              } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.hidden = false;
+              } finally {
+                voiceButton.textContent = "🎙️";
+              }
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+            voiceButton.textContent = "⏹️";
+            voiceButton.title = "Stop recording";
+          } else {
+            // Stop recording
+            mediaRecorder.stop();
+            isRecording = false;
+            voiceButton.title = "Start recording";
+          }
+        } catch (error) {
+          errorMessage.textContent =
+            "Microphone access failed. Please allow microphone permission.";
+          errorMessage.hidden = false;
+        }
+      });
+      const errorMessage = document.getElementById("errorMessage");
+      const connectionText = document.getElementById("connectionText");
+      const threadList = document.getElementById("threadList");
+
+      function getThreadId() {
+        const key = "apeksha_gpt_thread_id";
+        let id = sessionStorage.getItem(key);
+
+        if (!id) {
+          id =
+            "web-" +
+            (window.crypto && crypto.randomUUID
+              ? crypto.randomUUID()
+              : Date.now().toString(36));
+          sessionStorage.setItem(key, id);
+        }
+
+        return id;
+      }
+
+      let threadId = getThreadId();
+
+      function addMessage(role, text) {
+        const welcome = document.getElementById("welcome");
+        if (welcome) welcome.remove();
+
+        const row = document.createElement("div");
+        row.className = "message " + role;
+
+        const avatar = document.createElement("div");
+        avatar.className = "avatar " + role;
+        avatar.textContent = role === "user" ? "You" : "A";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+
+        row.append(avatar, bubble);
+        conversation.appendChild(row);
+        row.scrollIntoView({ behavior: "smooth", block: "end" });
+
+        return row;
+      }
+
+      async function loadThreads() {
+        try {
+          const response = await fetch("/threads");
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+          const threads = data.threads || data.conversations || [];
+
+          threadList.innerHTML = "";
+
+          if (threads.length === 0) {
+            threadList.innerHTML =
+              '<div class="thread-empty">No conversations yet.</div>';
+            return;
+          }
+
+          threads.forEach(function (thread) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "thread-item";
+            button.textContent = thread.title || "New Chat";
+            button.title = button.textContent;
+
+            button.addEventListener("click", async function () {
+              threadId = thread.thread_id;
+              sessionStorage.setItem("apeksha_gpt_thread_id", threadId);
+              connectionText.textContent = "Selected: " + button.textContent;
+
+              try {
+                const historyResponse = await fetch(
+                  "/history/" + encodeURIComponent(threadId),
+                );
+
+                if (!historyResponse.ok) return;
+
+                const historyData = await historyResponse.json();
+                const messages =
+                  historyData.messages || historyData.history || [];
+
+                conversation.innerHTML = "";
+
+                messages.forEach(function (message) {
+                  addMessage(
+                    message.role === "user" ? "user" : "ai",
+                    message.content,
+                  );
+                });
+              } catch (error) {
+                console.error("Could not load chat history:", error);
+              }
+            });
+
+            threadList.appendChild(button);
+          });
+        } catch (error) {
+          console.error("Could not load conversations:", error);
+          threadList.innerHTML =
+            '<div class="thread-empty">Could not load conversations. Check backend.</div>';
+        }
+      }
+
+      async function sendMessage(text) {
+        const message = text.trim();
+
+        if (!message || sendButton.disabled) return;
+
+        errorMessage.hidden = true;
+        addMessage("user", message);
+
+        input.value = "";
+        resizeInput();
+        sendButton.disabled = true;
+
+        const typing = addMessage("ai", "Thinking...");
+        connectionText.textContent = "Connecting to backend...";
+
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message, thread_id: threadId }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              data.error || "Backend returned HTTP " + response.status,
+            );
+          }
+
+          const answer = data.response ?? data.answer ?? data.reply;
+
+          if (typeof answer !== "string") {
+            throw new Error("Backend response did not contain an answer.");
+          }
+
+          typing.querySelector(".bubble").textContent = answer;
+          connectionText.textContent = "Backend connected";
+
+          await loadThreads();
+        } catch (error) {
+          typing.remove();
+          errorMessage.textContent =
+            "Could not get an AI response: " + error.message;
+          errorMessage.hidden = false;
+          connectionText.textContent = "Connection error";
+          console.error("Chat request failed:", error);
+        } finally {
+          sendButton.disabled = false;
+          input.focus();
+        }
+      }
+
+      function resizeInput() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 160) + "px";
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        sendMessage(input.value);
+      });
+
+      input.addEventListener("input", resizeInput);
+
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          form.requestSubmit();
+        }
+      });
+
+      document.querySelectorAll("[data-prompt]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          sendMessage(button.dataset.prompt);
+        });
+      });
+
+      document.getElementById("newChat").addEventListener("click", function () {
+        threadId =
+          "web-" +
+          (window.crypto && crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now().toString(36));
+
+        sessionStorage.setItem("apeksha_gpt_thread_id", threadId);
+        conversation.innerHTML = "";
+
+        const welcome = document.createElement("div");
+        welcome.className = "welcome";
+        welcome.id = "welcome";
+        welcome.innerHTML = `
+        <div class="welcome-icon">✦</div>
+        <h1>Your ideas, meet<br><span class="gradient">intelligent action.</span></h1>
+        <p>Ask a question, explore a concept, or use your agent to reason through a task step by step.</p>
+      `;
+
+        conversation.appendChild(welcome);
+        errorMessage.hidden = true;
+        connectionText.textContent = "New conversation started";
+        input.focus();
+      });
+
+      loadThreads();
+    </script>
+  </body>
+</html>
